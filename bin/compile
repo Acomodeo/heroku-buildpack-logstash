@@ -66,5 +66,16 @@ fi
 
 $extract $CACHE_DIR/$LOGSTASH_PACKAGE
 
+echo "-----> Installing java 8..."
+JVM_COMMON_BUILDPACK=${JVM_COMMON_BUILDPACK:-https://codon-buildpacks.s3.amazonaws.com/buildpacks/heroku/jvm-common.tgz}
+mkdir -p /tmp/jvm-common
+curl --silent --location $JVM_COMMON_BUILDPACK | tar xzm -C /tmp/jvm-common --strip-components=1
+. /tmp/jvm-common/bin/util
+. /tmp/jvm-common/bin/java
+
+# install JDK
+JVM_COMMON_DIR=/tmp/jvm-common
+install_java ${BUILD_DIR} 1.8 
+
 echo "Exporting PATH" | indent
 echo 'export PATH="$PATH:'${LOGSTASH_DIR##*/}'/bin"' > $INIT_SCRIPT
